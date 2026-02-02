@@ -9,7 +9,7 @@ const schema = z
   .object({
     name: z.string().min(2, 'Name is required').max(80),
     department: z.string().min(2, 'Department is required').max(80),
-    year: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]),
+    year: z.union([z.literal(1), z.literal(4)]), // 1 = Student, 4 = Alumni (backend unchanged)
     rollNumber: z.string().min(2, 'Roll Number is required').max(40),
     email: z.string().email('Enter a valid email'),
     mobileNumber: z
@@ -69,12 +69,10 @@ export function SignupPage() {
             <input className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" {...register('department')} />
           </FormField>
 
-          <FormField label="Year" error={errors.year?.message as string | undefined}>
+          <FormField label="Student type" error={errors.year?.message as string | undefined}>
             <select className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" {...register('year', { valueAsNumber: true })}>
-              <option value={1}>1st year</option>
-              <option value={2}>2nd year</option>
-              <option value={3}>3rd year</option>
-              <option value={4}>4th year</option>
+              <option value={1}>Student</option>
+              <option value={4}>Alumni</option>
             </select>
           </FormField>
 

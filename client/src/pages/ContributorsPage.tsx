@@ -12,10 +12,10 @@ type Contributor = {
   reputationScore: number
   contributionCount: number
   acceptedAnswersCount: number
+  answeredMyQuestionsCount?: number
   rating: number
   isOnline: boolean
   lastSeen: string
-  unreadNotifications: number
   liked: boolean
 }
 
@@ -58,11 +58,11 @@ export function ContributorsPage() {
           // Add default values for new fields that might not be in the API response yet
           const enrichedUsers = r.data.users.map(user => ({
             ...user,
-            rating: user.rating || Math.floor(Math.random() * 3) + 2, // Random rating between 2-5
-            isOnline: user.isOnline !== undefined ? user.isOnline : Math.random() > 0.5, // Random online status
-            lastSeen: user.lastSeen || `${Math.floor(Math.random() * 5) + 1}h ago`,
-            unreadNotifications: user.unreadNotifications || Math.floor(Math.random() * 5),
-            liked: user.liked || false
+            answeredMyQuestionsCount: user.answeredMyQuestionsCount ?? 0,
+            rating: user.rating ?? 3,
+            isOnline: user.isOnline === true,
+            lastSeen: user.lastSeen ?? 'Not seen recently',
+            liked: user.liked ?? false
           }))
           setItems(enrichedUsers)
         }
@@ -187,16 +187,16 @@ export function ContributorsPage() {
                       )}
                     </button>
                     
-                    {/* Notification Badge */}
-                    {u.unreadNotifications > 0 && (
-                      <div className="relative">
-                        <button className="p-2 rounded-full hover:bg-slate-200 transition-colors">
+                    {/* Bell: only if this person answered the logged-in user's questions */}
+                    {(u.answeredMyQuestionsCount ?? 0) > 0 && (
+                      <div className="relative" title={`Answered ${u.answeredMyQuestionsCount} of your questions`}>
+                        <button className="p-2 rounded-full hover:bg-slate-200 transition-colors" type="button">
                           <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                           </svg>
                         </button>
-                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-xs rounded-full flex items-center justify-center">
-                          {u.unreadNotifications}
+                        <span className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 bg-rose-500 text-white text-xs rounded-full flex items-center justify-center">
+                          {u.answeredMyQuestionsCount}
                         </span>
                       </div>
                     )}
@@ -266,7 +266,10 @@ export function ContributorsPage() {
                     </svg>
                     Direct Message
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors">
+                  <button
+                    onClick={() => navigate(`/profile/${u.id}`)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors"
+                  >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>

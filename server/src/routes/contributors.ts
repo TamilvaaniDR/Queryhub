@@ -1,0 +1,44 @@
+import { Router } from 'express'
+import { z } from 'zod'
+import { authRequired } from '../middleware/authRequired'
+import { User } from '../models/User'
+
+const router = Router()
+
+router.get('/', authRequired, async (req, res, next) => {
+  try {
+    const sortBy = z.enum(['reputation', 'accepted', 'contributions']).catch('reputation').parse(req.query.sortBy)
+    const year = typeof req.query.year === 'string' ? Number(req.query.year) : undefined
+
+    const filter: Record<string, unknown> = {}
+    if (year && [1, 2, 3, 4].includes(year)) filter.year = year
+
+    const sort =
+      sortBy === 'accepted'
+        ? ({ acceptedAnswersCount: -1, reputationScore: -1 } as Record<string, 1 | -1>)
+        : sortBy === 'contributions'
+          ? ({ contributionCount: -1, reputationScore: -1 } as Record<string, 1 | -1>)
+          : ({ reputationScore: -1, acceptedAnswersCount: -1 } as Record<string, 1 | -1>)
+
+    const users = await User.find(filter).sort(sort).limit(50).lean()
+
+    return res.json({
+      users: users.map((u) => ({
+        id: u._id.toString(),
+        name: u.name,
+        department: u.department,
+        year: u.year,
+        skills: u.skills,
+        experience: u.experience,
+        reputationScore: u.reputationScore,
+        contributionCount: u.contributionCount,
+        acceptedAnswersCount: u.acceptedAnswersCount,
+      })),
+    })
+  } catch (err) {
+    return next(err)
+  }
+})
+
+export default router
+

@@ -1,5 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../app/auth/AuthContext'
+import { useEffect, useState } from 'react'
+import { api } from '../app/api/http'
 
 interface NavbarProps {
   isAuthenticated?: boolean
@@ -8,16 +10,36 @@ interface NavbarProps {
 export function Navbar({ isAuthenticated = false }: NavbarProps) {
   const { state, logout } = useAuth()
   const user = state.status === 'authenticated' ? state.user : null
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return
+    
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await api.get('/api/messages/unread-count')
+        setUnreadCount(response.data.unreadCount)
+      } catch (error) {
+        console.error('Error fetching unread count:', error)
+      }
+    }
+    
+    fetchUnreadCount()
+    
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [isAuthenticated, user])
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link to={isAuthenticated ? "/community" : "/"} className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white grid place-items-center text-base font-bold shadow-lg">
+          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 text-white grid place-items-center text-base font-bold shadow-lg">
             DC
           </div>
-          <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent">
             DoubtConnect
           </span>
         </Link>
@@ -30,7 +52,7 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               className={({ isActive }) =>
                 `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                    ? 'bg-blue-50 text-blue-700 shadow-sm'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`
               }
@@ -42,7 +64,7 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               className={({ isActive }) =>
                 `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                    ? 'bg-blue-50 text-blue-700 shadow-sm'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`
               }
@@ -54,12 +76,41 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               className={({ isActive }) =>
                 `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                    ? 'bg-blue-50 text-blue-700 shadow-sm'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`
               }
             >
               Contributors
+            </NavLink>
+            <NavLink
+              to="/messages"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`
+              }
+            >
+              Messages
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </NavLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`
+              }
+            >
+              About
             </NavLink>
           </nav>
         )}
@@ -83,7 +134,7 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
                   to="/profile"
                   className="flex items-center gap-3 rounded-xl bg-white border border-slate-200 px-3 py-2 hover:bg-slate-50 transition-all"
                 >
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white grid place-items-center text-sm font-bold">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white grid place-items-center text-sm font-bold">
                     {user.name
                       .split(' ')
                       .map((n) => n[0])
@@ -115,7 +166,7 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               </Link>
               <Link
                 to="/signup"
-                className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg hover:from-indigo-700 hover:to-purple-700 transition-all"
+                className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-cyan-700 transition-all"
               >
                 Get Started
               </Link>
@@ -133,7 +184,7 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               className={({ isActive }) =>
                 `px-4 py-3 text-sm font-medium ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500'
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`
               }
@@ -145,7 +196,7 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               className={({ isActive }) =>
                 `px-4 py-3 text-sm font-medium ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500'
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`
               }
@@ -157,12 +208,41 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               className={({ isActive }) =>
                 `px-4 py-3 text-sm font-medium ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500'
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`
               }
             >
               Contributors
+            </NavLink>
+            <NavLink
+              to="/messages"
+              className={({ isActive }) =>
+                `px-4 py-3 text-sm font-medium relative ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`
+              }
+            >
+              Messages
+              {unreadCount > 0 && (
+                <span className="absolute top-2 right-3 w-5 h-5 bg-rose-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </NavLink>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `px-4 py-3 text-sm font-medium ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`
+              }
+            >
+              About
             </NavLink>
           </nav>
         </div>

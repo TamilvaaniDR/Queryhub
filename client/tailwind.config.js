@@ -8,10 +8,10 @@ export default {
       },
       colors: {
         brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          600: '#4f46e5',
-          700: '#4338ca',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          600: '#2563eb',
+          700: '#1d4ed8',
         },
       },
       boxShadow: {

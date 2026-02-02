@@ -24,10 +24,12 @@ router.get('/', authRequired, async (req, res, next) => {
   try {
     const q = typeof req.query.q === 'string' ? req.query.q.trim() : ''
     const category = typeof req.query.category === 'string' ? req.query.category : undefined
+    const unanswered = req.query.unanswered === 'true'
 
     const filter: Record<string, unknown> = {}
     if (category && categoryEnum.safeParse(category).success) filter.category = category
     if (q) filter.$text = { $search: q }
+    if (unanswered) filter.answersCount = 0
 
     const questions = await Question.find(filter)
       .sort({ createdAt: -1 })

@@ -12,6 +12,7 @@ import questionsRoutes from './routes/questions'
 import contributorsRoutes from './routes/contributors'
 import profileRoutes from './routes/profile'
 import membershipRoutes from './routes/membership'
+import messagesRoutes from './routes/messages'
 
 export function createApp() {
   const app = express()
@@ -46,6 +47,7 @@ export function createApp() {
   app.use('/api/contributors', contributorsRoutes)
   app.use('/api/profile', profileRoutes)
   app.use('/api/membership', membershipRoutes)
+  app.use('/api/messages', messagesRoutes)
 
   app.use(notFound)
   app.use(errorHandler)

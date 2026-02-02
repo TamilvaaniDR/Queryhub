@@ -46,7 +46,7 @@ export function LoginPage() {
         <form className="space-y-4" onSubmit={onSubmit}>
           <FormField label="Email or Roll Number" error={errors.identifier?.message}>
             <input
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-300"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-300"
               placeholder="example@college.edu or 22CS123"
               {...register('identifier')}
             />
@@ -55,7 +55,7 @@ export function LoginPage() {
           <FormField label="Password" error={errors.password?.message}>
             <input
               type="password"
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-300"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-300"
               {...register('password')}
             />
           </FormField>
@@ -68,7 +68,7 @@ export function LoginPage() {
 
           <button
             disabled={isSubmitting}
-            className="w-full rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition disabled:opacity-60"
+            className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition disabled:opacity-60"
           >
             {isSubmitting ? 'Logging in…' : 'Login'}
           </button>
@@ -76,7 +76,7 @@ export function LoginPage() {
 
         <div className="mt-4 text-sm text-slate-600">
           New here?{' '}
-          <Link className="font-semibold text-indigo-700 hover:underline" to="/signup">
+          <Link className="font-semibold text-blue-700 hover:underline" to="/signup">
             Create an account
           </Link>
         </div>

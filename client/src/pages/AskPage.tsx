@@ -81,7 +81,7 @@ export function AskPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-6 mb-6 shadow-sm">
+      <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 p-6 mb-6 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Ask a Question</h1>
         <p className="text-slate-600">Share your knowledge and get help from the community. Be specific and include relevant details.</p>
       </div>
@@ -91,7 +91,7 @@ export function AskPage() {
           {/* Title Field */}
           <FormField label="Question Title" error={errors.title?.message}>
             <input 
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
               placeholder="e.g., How to implement JWT authentication in MERN stack?"
               {...register('title')} 
             />
@@ -104,12 +104,12 @@ export function AskPage() {
               {categories.map((cat) => (
                 <label 
                   key={cat.id}
-                  className="flex items-start p-4 rounded-xl border border-slate-200 hover:border-indigo-300 cursor-pointer transition-colors has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50"
+                  className="flex items-start p-4 rounded-xl border border-slate-200 hover:border-blue-300 cursor-pointer transition-colors has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"
                 >
                   <input
                     type="radio"
                     value={cat.name}
-                    className="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500"
                     {...register('category')}
                   />
                   <div className="ml-3">
@@ -131,7 +131,7 @@ export function AskPage() {
           <FormField label="Detailed Description" error={errors.description?.message}>
             <textarea 
               rows={8} 
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
               placeholder="Explain your question in detail. You can use #hashtags to tag relevant topics..."
               {...register('description')} 
             />
@@ -162,7 +162,7 @@ export function AskPage() {
           {/* Manual Tags */}
           <FormField label="Additional Tags (comma separated)" error={errors.tags?.message}>
             <input 
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
               placeholder="e.g., mongodb, react, nodejs, javascript"
               {...register('tags')} 
             />
@@ -190,7 +190,7 @@ export function AskPage() {
             </div>
             <button
               disabled={isSubmitting}
-              className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60 flex items-center gap-2"
+              className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60 flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>

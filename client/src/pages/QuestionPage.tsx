@@ -101,7 +101,7 @@ export function QuestionPage() {
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-12">
-      <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+      <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
       <p className="text-slate-600">Loading question...</p>
     </div>
   )
@@ -192,7 +192,7 @@ export function QuestionPage() {
             <FormField label="Write your answer" error={errors.body?.message}>
               <textarea 
                 rows={6} 
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                 placeholder="Share your knowledge and help the community..."
                 {...register('body')} 
               />
@@ -213,7 +213,7 @@ export function QuestionPage() {
               </div>
               <button
                 disabled={isSubmitting}
-                className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60 flex items-center gap-2"
+                className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all disabled:opacity-60 flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>

@@ -9,9 +9,15 @@ router.get('/', authRequired, async (req, res, next) => {
   try {
     const sortBy = z.enum(['reputation', 'accepted', 'contributions']).catch('reputation').parse(req.query.sortBy)
     const year = typeof req.query.year === 'string' ? Number(req.query.year) : undefined
+    const skills = typeof req.query.skills === 'string' ? req.query.skills.split(',').map(s => s.trim()).filter(Boolean) : undefined
 
     const filter: Record<string, unknown> = {}
     if (year && [1, 2, 3, 4].includes(year)) filter.year = year
+    
+    // Add skills filter if provided
+    if (skills && skills.length > 0) {
+      filter.skills = { $in: skills }
+    }
 
     const sort =
       sortBy === 'accepted'

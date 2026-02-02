@@ -9,11 +9,15 @@ import { QuestionPage } from './pages/QuestionPage'
 import { ContributorsPage } from './pages/ContributorsPage'
 import { LandingPage } from './pages/LandingPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { MessagesPage } from './pages/MessagesPage'
+import { MessagesListPage } from './pages/MessagesListPage'
+import { AboutPage } from './pages/AboutPage'
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
@@ -24,6 +28,8 @@ function App() {
           <Route path="/q/:id" element={<QuestionPage />} />
           <Route path="/contributors" element={<ContributorsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/messages" element={<MessagesListPage />} />
+          <Route path="/messages/:userId" element={<MessagesPage />} />
         </Route>
       </Route>
     </Routes>

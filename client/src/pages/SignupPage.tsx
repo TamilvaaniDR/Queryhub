@@ -110,7 +110,7 @@ export function SignupPage() {
           <div className="md:col-span-2">
             <button
               disabled={isSubmitting}
-              className="w-full rounded-xl bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition disabled:opacity-60"
+              className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition disabled:opacity-60"
             >
               {isSubmitting ? 'Creating…' : 'Create account'}
             </button>
@@ -119,7 +119,7 @@ export function SignupPage() {
 
         <div className="mt-4 text-sm text-slate-600">
           Already have an account?{' '}
-          <Link className="font-semibold text-indigo-700 hover:underline" to="/login">
+          <Link className="font-semibold text-blue-700 hover:underline" to="/login">
             Login
           </Link>
         </div>

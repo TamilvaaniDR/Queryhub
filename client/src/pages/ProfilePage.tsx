@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { api } from '../app/api/http'
 import { useAuth } from '../app/auth/AuthContext'
@@ -18,7 +19,31 @@ type Values = z.infer<typeof schema>
 export function ProfilePage() {
   const { state, refreshMe } = useAuth()
   const me = state.status === 'authenticated' ? state.user : null
+  const { userId } = useParams<{ userId?: string }>()
   const [isEditing, setIsEditing] = useState(false)
+  const [viewedUser, setViewedUser] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+
+  const isOwnProfile = !userId || userId === me?.id
+  const userToShow = isOwnProfile ? me : viewedUser
+
+  // Fetch user data when viewing another user's profile
+  useEffect(() => {
+    if (!isOwnProfile && userId) {
+      const fetchUser = async () => {
+        setLoading(true)
+        try {
+          const response = await api.get(`/api/profile/${userId}`)
+          setViewedUser(response.data)
+        } catch (error) {
+          console.error('Failed to fetch user profile:', error)
+        } finally {
+          setLoading(false)
+        }
+      }
+      fetchUser()
+    }
+  }, [userId, isOwnProfile])
 
   const {
     register,

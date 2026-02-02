@@ -162,9 +162,9 @@ export function QuestionPage() {
                   )}
                   <button
                     onClick={() => like(a.id)}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+                    className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition flex items-center gap-1"
                   >
-                    Like · {a.likesCount}
+                    ❤️ {a.likesCount}
                   </button>
                   {canAccept && !a.isAccepted && (
                     <button
@@ -236,4 +236,6 @@ export function QuestionPage() {
     </div>
   )
 }
+
+
 

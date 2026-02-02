@@ -28,6 +28,7 @@ function App() {
           <Route path="/q/:id" element={<QuestionPage />} />
           <Route path="/contributors" element={<ContributorsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/messages" element={<MessagesListPage />} />
           <Route path="/messages/:userId" element={<MessagesPage />} />
         </Route>

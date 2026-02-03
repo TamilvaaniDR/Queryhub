@@ -22,6 +22,8 @@ export interface IUser {
   contributionCount: number
   acceptedAnswersCount: number
 
+  lastActiveAt?: Date | null
+
   refreshTokenHash?: string | null
   refreshTokenIssuedAt?: Date | null
 
@@ -49,6 +51,7 @@ const userSchema = new Schema<IUser>(
     contributionCount: { type: Number, default: 0 },
     acceptedAnswersCount: { type: Number, default: 0 },
 
+    lastActiveAt: { type: Date, default: null },
     refreshTokenHash: { type: String, default: null, select: false },
     refreshTokenIssuedAt: { type: Date, default: null, select: false },
   },

@@ -96,6 +96,7 @@ router.post('/login', async (req, res, next) => {
 
     user.refreshTokenHash = await hashToken(rti)
     user.refreshTokenIssuedAt = new Date()
+    user.lastActiveAt = new Date()
     await user.save()
 
     res.cookie('refresh_token', refreshToken, refreshCookieOptions())
@@ -144,6 +145,7 @@ router.post('/refresh', async (req, res, next) => {
     const ok = await compareToken(payload.rti, user.refreshTokenHash)
     if (!ok) throw new HttpError(401, 'Refresh token not recognized', { code: 'REFRESH_INVALID' })
 
+    await User.findByIdAndUpdate(payload.sub, { $set: { lastActiveAt: new Date() } })
     const accessToken = signAccessToken(user.id)
     return res.json({ accessToken })
   } catch (err) {
@@ -157,7 +159,9 @@ router.post('/logout', async (req, res, next) => {
     if (token) {
       try {
         const payload = verifyRefreshToken(token)
-        await User.findByIdAndUpdate(payload.sub, { $set: { refreshTokenHash: null, refreshTokenIssuedAt: null } })
+        await User.findByIdAndUpdate(payload.sub, {
+          $set: { refreshTokenHash: null, refreshTokenIssuedAt: null, lastActiveAt: null },
+        })
       } catch {
         // ignore
       }
@@ -172,6 +176,7 @@ router.post('/logout', async (req, res, next) => {
 
 router.get('/me', authRequired, async (req: AuthedRequest, res, next) => {
   try {
+    await User.findByIdAndUpdate(req.userId, { $set: { lastActiveAt: new Date() } })
     const user = await User.findById(req.userId).lean()
     if (!user) throw new HttpError(404, 'User not found', { code: 'USER_NOT_FOUND' })
 

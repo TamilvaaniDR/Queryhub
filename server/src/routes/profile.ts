@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { Router } from 'express'
 import { z } from 'zod'
 import { authRequired, type AuthedRequest } from '../middleware/authRequired'
@@ -5,6 +6,37 @@ import { User } from '../models/User'
 import { HttpError } from '../utils/httpError'
 
 const router = Router()
+
+// GET /api/profile/:userId – fetch another user's public profile (for "View Profile" from contributors)
+router.get('/:userId', authRequired, async (req, res, next) => {
+  try {
+    const { userId } = req.params
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new HttpError(400, 'Invalid user id', { code: 'INVALID_USER_ID' })
+    }
+    const user = await User.findById(userId)
+      .select('name department year skills experience githubUrl linkedinUrl reputationScore contributionCount acceptedAnswersCount')
+      .lean()
+    if (!user) {
+      throw new HttpError(404, 'User not found', { code: 'USER_NOT_FOUND' })
+    }
+    return res.json({
+      id: user._id.toString(),
+      name: user.name,
+      department: user.department,
+      year: user.year,
+      skills: user.skills,
+      experience: user.experience,
+      githubUrl: user.githubUrl,
+      linkedinUrl: user.linkedinUrl,
+      reputationScore: user.reputationScore,
+      contributionCount: user.contributionCount,
+      acceptedAnswersCount: user.acceptedAnswersCount,
+    })
+  } catch (err) {
+    return next(err)
+  }
+})
 
 const profileSchema = z.object({
   skills: z.array(z.string().trim().min(2).max(40)).max(20),

@@ -13,6 +13,7 @@ import contributorsRoutes from './routes/contributors'
 import profileRoutes from './routes/profile'
 import membershipRoutes from './routes/membership'
 import messagesRoutes from './routes/messages'
+import leaderboardRoutes from './routes/leaderboard'
 
 export function createApp() {
   const app = express()
@@ -48,6 +49,7 @@ export function createApp() {
   app.use('/api/profile', profileRoutes)
   app.use('/api/membership', membershipRoutes)
   app.use('/api/messages', messagesRoutes)
+  app.use('/api/leaderboard', leaderboardRoutes)
 
   app.use(notFound)
   app.use(errorHandler)

@@ -84,6 +84,18 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               Contributors
             </NavLink>
             <NavLink
+              to="/leaderboard"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`
+              }
+            >
+              Leaderboard
+            </NavLink>
+            <NavLink
               to="/messages"
               className={({ isActive }) =>
                 `px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
@@ -214,6 +226,18 @@ export function Navbar({ isAuthenticated = false }: NavbarProps) {
               }
             >
               Contributors
+            </NavLink>
+            <NavLink
+              to="/leaderboard"
+              className={({ isActive }) =>
+                `px-4 py-3 text-sm font-medium ${
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`
+              }
+            >
+              Leaderboard
             </NavLink>
             <NavLink
               to="/messages"

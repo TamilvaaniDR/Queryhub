@@ -86,7 +86,8 @@ router.post('/', authRequired, async (req: AuthedRequest, res, next) => {
       )
     }
 
-    await User.findByIdAndUpdate(req.userId, { $inc: { contributionCount: 1, reputationScore: 2 } })
+    // Contribution count is for answers only; reputation still rewards asking
+    await User.findByIdAndUpdate(req.userId, { $inc: { reputationScore: 2 } })
 
     return res.status(201).json({ id: question._id.toString() })
   } catch (err) {

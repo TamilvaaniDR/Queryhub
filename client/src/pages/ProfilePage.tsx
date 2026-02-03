@@ -29,21 +29,27 @@ export function ProfilePage() {
 
   // Fetch user data when viewing another user's profile
   useEffect(() => {
-    if (!isOwnProfile && userId) {
-      const fetchUser = async () => {
-        setLoading(true)
-        try {
-          const response = await api.get(`/api/profile/${userId}`)
-          setViewedUser(response.data)
-        } catch (error) {
-          console.error('Failed to fetch user profile:', error)
-        } finally {
-          setLoading(false)
-        }
-      }
-      fetchUser()
+    if (!userId || userId === me?.id) {
+      setViewedUser(null)
+      return
     }
-  }, [userId, isOwnProfile])
+    let cancelled = false
+    setViewedUser(null)
+    const fetchUser = async () => {
+      setLoading(true)
+      try {
+        const response = await api.get(`/api/profile/${userId}`)
+        if (!cancelled) setViewedUser(response.data)
+      } catch (error) {
+        if (!cancelled) setViewedUser(null)
+        console.error('Failed to fetch user profile:', error)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    fetchUser()
+    return () => { cancelled = true }
+  }, [userId, me?.id])
 
   const {
     register,
@@ -100,45 +106,71 @@ export function ProfilePage() {
   const githubUrl = watch('githubUrl')
   const linkedinUrl = watch('linkedinUrl')
 
+  // Loading another user's profile
+  if (!isOwnProfile && loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4" />
+        <p className="text-slate-600">Loading profile...</p>
+      </div>
+    )
+  }
+
+  // Viewing another user but fetch failed or user not found
+  if (!isOwnProfile && !loading && !viewedUser) {
+    return (
+      <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-12 text-center">
+        <h2 className="text-lg font-semibold text-slate-900 mb-2">Profile not found</h2>
+        <p className="text-slate-600">This user may not exist or the profile could not be loaded.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Profile Header */}
       <div className="rounded-2xl bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-100 p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">My Profile</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">
+              {isOwnProfile ? 'My Profile' : `${userToShow?.name ?? 'Profile'}'s Profile`}
+            </h1>
             <p className="text-slate-600">
-              {isEditing 
-                ? 'Update your skills and experience to appear as a stronger mentor on the Top Contributors page.'
-                : 'View and manage your profile information.'}
+              {isOwnProfile
+                ? (isEditing
+                  ? 'Update your skills and experience to appear as a stronger mentor on the Top Contributors page.'
+                  : 'View and manage your profile information.')
+                : `Viewing ${userToShow?.name ?? 'this user'}'s profile.`}
             </p>
           </div>
           <div className="flex flex-col gap-3">
-            {me && (
+            {userToShow && (
               <div className="bg-white rounded-xl px-4 py-3 text-sm shadow-sm">
-                <div className="font-semibold text-slate-900">{me.name}</div>
+                <div className="font-semibold text-slate-900">{userToShow.name}</div>
                 <div>
-                  {me.department} · Year {me.year}
+                  {userToShow.department} · Year {userToShow.year}
                 </div>
-                <div>Rep {me.reputationScore}</div>
+                <div>Rep {userToShow.reputationScore}</div>
               </div>
             )}
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              {isEditing ? 'Cancel Edit' : 'Edit Profile'}
-            </button>
+            {isOwnProfile && (
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                {isEditing ? 'Cancel Edit' : 'Edit Profile'}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Profile Content */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        {isEditing ? (
+        {isOwnProfile && isEditing ? (
           <form className="space-y-6" onSubmit={onSubmit}>
             <FormField label="Skills (comma separated)" error={errors.skillsInput?.message}>
               <input
@@ -207,9 +239,9 @@ export function ProfilePage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-slate-900 mb-3">Skills</h3>
-              {me?.skills?.length ? (
+              {userToShow?.skills?.length ? (
                 <div className="flex flex-wrap gap-2">
-                  {me.skills.map((skill) => (
+                  {userToShow.skills.map((skill) => (
                     <span key={skill} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                       {skill}
                     </span>
@@ -223,16 +255,16 @@ export function ProfilePage() {
             <div>
               <h3 className="text-lg font-semibold text-slate-900 mb-3">Experience</h3>
               <p className="text-slate-700 whitespace-pre-wrap">
-                {me?.experience || 'No experience information provided'}</p>
+                {userToShow?.experience || 'No experience information provided'}</p>
             </div>
 
-            {(me?.githubUrl || me?.linkedinUrl) && (
+            {(userToShow?.githubUrl || userToShow?.linkedinUrl) && (
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-3">Links</h3>
                 <div className="flex flex-col gap-2">
-                  {me.githubUrl && (
+                  {userToShow.githubUrl && (
                     <a 
-                      href={me.githubUrl} 
+                      href={userToShow.githubUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-blue-600 hover:underline"
@@ -243,9 +275,9 @@ export function ProfilePage() {
                       GitHub Profile
                     </a>
                   )}
-                  {me.linkedinUrl && (
+                  {userToShow.linkedinUrl && (
                     <a 
-                      href={me.linkedinUrl} 
+                      href={userToShow.linkedinUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-blue-600 hover:underline"
@@ -263,21 +295,23 @@ export function ProfilePage() {
         )}
       </div>
 
-      {me && (
+      {userToShow && (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="text-lg font-semibold text-slate-900 mb-4">Account Overview</div>
+          <div className="text-lg font-semibold text-slate-900 mb-4">
+            {isOwnProfile ? 'Account Overview' : 'Contributor Stats'}
+          </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 p-4 border border-blue-100">
               <div className="text-blue-600 font-medium mb-1">Reputation</div>
-              <div className="text-2xl font-bold text-slate-900">{me.reputationScore}</div>
+              <div className="text-2xl font-bold text-slate-900">{userToShow.reputationScore}</div>
             </div>
             <div className="rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 p-4 border border-blue-100">
               <div className="text-blue-600 font-medium mb-1">Contributions</div>
-              <div className="text-2xl font-bold text-slate-900">{me.contributionCount}</div>
+              <div className="text-2xl font-bold text-slate-900">{userToShow.contributionCount}</div>
             </div>
             <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-green-50 p-4 border border-emerald-100">
               <div className="text-emerald-600 font-medium mb-1">Accepted Answers</div>
-              <div className="text-2xl font-bold text-slate-900">{me.acceptedAnswersCount}</div>
+              <div className="text-2xl font-bold text-slate-900">{userToShow.acceptedAnswersCount}</div>
             </div>
           </div>
         </div>

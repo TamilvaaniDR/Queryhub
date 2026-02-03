@@ -7,6 +7,7 @@ import { FeedPage } from './pages/FeedPage'
 import { AskPage } from './pages/AskPage'
 import { QuestionPage } from './pages/QuestionPage'
 import { ContributorsPage } from './pages/ContributorsPage'
+import { LeaderboardPage } from './pages/LeaderboardPage'
 import { LandingPage } from './pages/LandingPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { MessagesPage } from './pages/MessagesPage'
@@ -27,6 +28,7 @@ function App() {
           <Route path="/ask" element={<AskPage />} />
           <Route path="/q/:id" element={<QuestionPage />} />
           <Route path="/contributors" element={<ContributorsPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/messages" element={<MessagesListPage />} />
